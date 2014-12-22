@@ -92,6 +92,8 @@ class Pointer
       [parent..., key] = @path
       @root.get(parent).update (obj) -> (obj[key] = data; obj)
 
+    @emit('swap', data, value)
+
   on:   (event, args...) -> @root.on.call(this, [event, @path...], args...)
   off:  (event, args...) -> @root.off.call(this, [event, @path...], args...)
   emit: (event, args...) -> @root.emit.call(this, [event, @path...], args...)

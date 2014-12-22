@@ -35,7 +35,8 @@ the pointer.
 
 ### `Pointer::update((oldData) -> newData)`
 Updates the data underlying the pointer based on the value returned by the given
-function.
+function.  This will emit [a "swap" event](#Events) on this pointer and all
+pointers that contain this one.
 
 ## Events
 
@@ -54,16 +55,36 @@ passing the given arguments to the callback functions.
 * `Pointer#get` will always return a Pointer (possibly to an unknown property).
 * `Pointer#value` will return `undefined` if the pointer cannot be resolved.
 * Two pointers representing the same absolute path will return the same object.
+* `Pointer#update` will not change object references if the data is unchanged.
+  * Similarly, `Pointer#update` will not fire events if the data is unchanged.
+
+## Notable Behavior
+
+* `Pointer#update` will *not* fire a 'swap' event for pointers to keys beneath
+  it.  If this is behavior you need, it's recommended that you make smaller
+  changes to more deeply nested pointers.
+
+  ``` coffeescript
+  P = Pointer({ a: { b: 1 } })
+  A = P.get('a')
+  AB = P.get('a', 'b')
+
+  # This call will fire events on `P` and `A`, but not `AB`.
+  A.update (obj) ->
+    obj.b += 10
+    return obj
+
+  # This call will fire events on `P`, `A`, and `AB`.
+  AB.update (value) -> value + 10
+  ```
 
 ## Undefined Behavior
 
 * Directly modifying the underlying data structure is not encouraged.
-  * Use the `Pointer#update` method to make changes instead.
+  * Use `Pointer#update` to make changes instead.
 
 ## TODO
 
-* Events
-  * `on`, `once`, `off`, `emit`
 * History
   * `undo`, `redo`
 * `shouldComponentUpdate` Helpers

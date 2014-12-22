@@ -44,4 +44,55 @@ suite.addBatch
       ptr.get('object').update (obj) -> JSON.parse(JSON.stringify(obj))
       assert.strictEqual(ptr.value('object'), data.object)
 
+    '#update fires a "swap" event on all affected nodes': (data) ->
+      ptr = Pointer(data)
+
+      [newResults, oldResults] = [[], []]
+      appendData = (newData, oldData) ->
+        newResults.push(newData)
+        oldResults.push(oldData)
+
+      ptr.on('swap', appendData)
+      ptr.get('object').on('swap', appendData)
+      ptr.get('object', 'a').on('swap', appendData)
+      ptr.get('object', 'a', 'b').on('swap', appendData)
+      ptr.get('object', 'a', 'b', 'c').on('swap', appendData)
+
+      ptr.get('object', 'a', 'b', 'c').update -> 'new string'
+
+      assert.deepEqual oldResults, [
+        { key: 'value', object: { a: { b: { c: 'string' } } } }
+        { a: { b: { c: 'string' } } }
+        { b: { c: 'string' } }
+        { c: 'string' }
+        'string'
+      ]
+
+      assert.deepEqual newResults, [
+        { key: 'value', object: { a: { b: { c: 'new string' } } } }
+        { a: { b: { c: 'new string' } } }
+        { b: { c: 'new string' } }
+        { c: 'new string' }
+        'new string'
+      ]
+
+    '#update does not fire a "swap" event if the data is unchanged': (data) ->
+      ptr = Pointer(data)
+
+      [newResults, oldResults] = [[], []]
+      appendData = (newData, oldData) ->
+        newResults.push(newData)
+        oldResults.push(oldData)
+
+      ptr.on('swap', appendData)
+      ptr.get('object').on('swap', appendData)
+      ptr.get('object', 'a').on('swap', appendData)
+      ptr.get('object', 'a', 'b').on('swap', appendData)
+      ptr.get('object', 'a', 'b', 'c').on('swap', appendData)
+
+      ptr.get('object', 'a', 'b', 'c').update -> 'string'
+
+      assert.deepEqual oldResults, []
+      assert.deepEqual newResults, []
+
 suite.export(module)
