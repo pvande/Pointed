@@ -48,16 +48,19 @@ class Pointer
 
       eventListeners[key.join('\0\0')] ||= []
 
+    # Adds an event listener for the given key.
     @on = (key, fn) ->
       throw 'Must provide a callback!' unless fn instanceof Function
       getListenersFor(key).push(fn)
 
+    # Removes an event listener for the given key.
     @off = (key, fn) ->
       throw 'Must provide a callback!' unless fn instanceof Function
       listeners = getListenersFor(key)
       idx = listeners.indexOf(fn)
       listeners.splice(idx, 1) unless idx is -1
 
+    # Invokes event callbacks for the given key.
     @emit = (key, data...) ->
       fn.apply(this, data) for fn in getListenersFor(key)
       return true
@@ -94,6 +97,7 @@ class Pointer
 
     @emit('swap', data, value)
 
+  # Basic EventEmitter behaviors; calls on subpointers are delegated to `@root`.
   on:   (event, args...) -> @root.on.call(this, [event, @path...], args...)
   off:  (event, args...) -> @root.off.call(this, [event, @path...], args...)
   emit: (event, args...) -> @root.emit.call(this, [event, @path...], args...)
