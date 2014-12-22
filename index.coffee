@@ -40,6 +40,28 @@ class Pointer
     @data = obj
     @path = []
 
+    eventListeners = { 'swap': [] }
+    getListenersFor = (key) ->
+      key = [key] unless key instanceof Array
+      unless key.every((k) -> typeof k is 'string')
+        throw 'Must provide an event name!'
+
+      eventListeners[key.join('\0\0')] ||= []
+
+    @on = (key, fn) ->
+      throw 'Must provide a callback!' unless fn instanceof Function
+      getListenersFor(key).push(fn)
+
+    @off = (key, fn) ->
+      throw 'Must provide a callback!' unless fn instanceof Function
+      listeners = getListenersFor(key)
+      idx = listeners.indexOf(fn)
+      listeners.splice(idx, 1) unless idx is -1
+
+    @emit = (key, data...) ->
+      fn.apply(this, data) for fn in getListenersFor(key)
+      return true
+
   # Returns a new Pointer as a reference into the wrapped object.
   get: (key...) ->
     key = key[0] if key.length is 1 && key[0] instanceof Array
@@ -69,5 +91,9 @@ class Pointer
     else
       [parent..., key] = @path
       @root.get(parent).update (obj) -> (obj[key] = data; obj)
+
+  on:   (event, args...) -> @root.on.call(this, [event, @path...], args...)
+  off:  (event, args...) -> @root.off.call(this, [event, @path...], args...)
+  emit: (event, args...) -> @root.emit.call(this, [event, @path...], args...)
 
 module.exports = Pointer

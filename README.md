@@ -37,6 +37,18 @@ the pointer.
 Updates the data underlying the pointer based on the value returned by the given
 function.
 
+## Events
+
+### `Pointer::on(event, fn)`
+Adds a callback function for the named event to the pointer.
+
+### `Pointer::off(event, fn)`
+Removes a callback function for the named event to the pointer.
+
+### `Pointer::emit(event, args...)`
+Fires the named event for this pointer and other pointers to the same data,
+passing the given arguments to the callback functions.
+
 ## Guarantees
 
 * `Pointer#get` will always return a Pointer (possibly to an unknown property).
