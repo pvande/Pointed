@@ -26,7 +26,7 @@ performance and compatibility profiles.
 Returns a new Pointer instance for the root of the given `data` structure.
 
 ### `Pointer::get(key...)`
-Returns a new Pointer instance for an element of the  data structure represented
+Returns a new Pointer instance for an element of the data structure represented
 by the pointer.
 
 ### `Pointer::value(key...)`
@@ -37,6 +37,11 @@ the pointer.
 Updates the data underlying the pointer based on the value returned by the given
 function.  This will emit [a "swap" event](#Events) on this pointer and all
 pointers that contain this one.
+
+### `Pointer::map((ptr, key) -> obj)`
+Iterates over the underlying array (or object), generating pointers for each
+element, and passes each pointer and the index (or key) to the given function.
+The values returned by the function will be collected and returned as an array.
 
 ## Events
 

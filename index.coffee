@@ -97,6 +97,15 @@ class Pointer
 
     @emit('swap', data, value)
 
+  # Maps the given function over pointers to each element of the underlying
+  # value.
+  map: (fn = (x) -> x) ->
+    value = @value()
+    if value instanceof Array
+      fn.call(this, @get(idx), idx) for _, idx in value
+    else
+      fn.call(this, @get(key), key) for own key of value
+
   # Basic EventEmitter behaviors; calls on subpointers are delegated to `@root`.
   on:   (event, args...) -> @root.on.call(this, [event, @path...], args...)
   off:  (event, args...) -> @root.off.call(this, [event, @path...], args...)
