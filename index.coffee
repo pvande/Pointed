@@ -12,15 +12,22 @@ copy = (from, onto = {}) ->
   return onto
 
 
-# The base class for our atomic data container.  The `root` property of every
-# `Pointer` instance inherits from this, and basic data manipulation behaviors
-# will be proxied through these methods.
+# Our atomic data container class.  The `root` property of every `Pointer`
+# instance inherits from this, and new `Pointer` instances are created through
+# this class.  All data manipulation and event operations on `Pointer`s are
+# proxied through this class.
 class Root
-  constructor: (data) -> @swap(data)
+  constructor: (data) ->
+    events = { 'swap': [] }
+    @listeners = (key) ->
+      throw 'Must provide an event name!' unless typeof key[0] is 'string'
+      events[JSON.stringify(key)] ||= []
+
+    @swap(data)
 
   # Creates a new `Pointer` instance for the given path.
   get: (path) ->
-    copy { path, hash: hash(@value(path)) }, Pointer(this)
+    copy { path, hash: hash(@value(path)) }, new Pointer(this)
 
   # Fetches the value at the given path.
   value: (path) ->
@@ -29,57 +36,31 @@ class Root
   # Atomically update the underlying data store.
   swap: (@data) ->
 
-# Since related pointers share events, it makes sense to route them all through
-# the object they all share in common: the `root` property.  This function
-# creates a subclass of `Root` and closures over a clean set of event listeners,
-# then returns an instance of this ad-hoc subclass wrapping the given object.
-createRoot = (obj) ->
-  eventListeners = { 'swap': [] }
+  # Adds an event listener for the given key.
+  on: (key, fn) ->
+    throw 'Must provide a callback!' unless fn instanceof Function
+    @listeners(key).push(fn)
 
-  getListenersFor = (key) ->
-    key = [key] unless key instanceof Array
-    unless key.every((k) -> typeof k is 'string')
-      throw 'Must provide an event name!'
+  # Removes an event listener for the given key.
+  off: (key, fn) ->
+    throw 'Must provide a callback!' unless fn instanceof Function
+    listeners = @listeners(key)
+    idx = listeners.indexOf(fn)
+    listeners.splice(idx, 1) unless idx is -1
 
-    eventListeners[JSON.stringify(key)] ||= []
-
-  # We pull this little trick to enable variable shadowing, which lets us use
-  # the same name for this subclass as for the base class.
-  do (Root, Base = Root) ->
-
-    class Root extends Base
-      # Adds an event listener for the given key.
-      on: (key, fn) ->
-        throw 'Must provide a callback!' unless fn instanceof Function
-        getListenersFor(key).push(fn)
-
-      # Removes an event listener for the given key.
-      off: (key, fn) ->
-        throw 'Must provide a callback!' unless fn instanceof Function
-        listeners = getListenersFor(key)
-        idx = listeners.indexOf(fn)
-        listeners.splice(idx, 1) unless idx is -1
-
-      # Invokes event callbacks for the given key.
-      emit: (key, data...) ->
-        listeners = getListenersFor(key)
-        pointer = @get(key.slice(1))
-        fn.apply(pointer, data) for fn in listeners
-        return
-
-    return new Root(obj)
+  # Invokes event callbacks for the given key.
+  emit: (key, data...) ->
+    ptr = @get(key.slice(1))
+    fn.apply(ptr, data) for fn in @listeners(key)
+    return
 
 
 class Pointer
   constructor: (obj) ->
-    return new Pointer(obj) unless this instanceof Pointer
-
-    root = obj
-    root = createRoot(root) unless obj instanceof Root
-
-    @root = root
-    @path = []
-    @hash = hash(obj)
+    if this instanceof Pointer && obj instanceof Root
+      @root = obj
+    else
+      return (new Root(obj)).get([])
 
   # Returns a new Pointer as a reference into the wrapped object.
   get: (keys...) ->
@@ -119,9 +100,9 @@ class Pointer
       fn.call(this, @get(key), key) for own key of value
 
   # Basic EventEmitter behaviors; calls on subpointers are delegated to `@root`.
-  on:   (event, args...) -> @root.on.call(this, [event, @path...], args...)
-  off:  (event, args...) -> @root.off.call(this, [event, @path...], args...)
-  emit: (event, args...) -> @root.emit.call(this, [event, @path...], args...)
+  on:   (event, args...) -> @root.on([event, @path...], args...)
+  off:  (event, args...) -> @root.off([event, @path...], args...)
+  emit: (event, args...) -> @root.emit([event, @path...], args...)
 
   # Computes pointer equality, based on hash identity.
   isEqual: (other) ->

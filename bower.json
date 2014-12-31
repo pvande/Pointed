@@ -1,0 +1,25 @@
+{
+  "name": "pointed",
+  "version": "0.0.1",
+  "authors": [
+    "Pieter van de Bruggen <pvande@gmail.com>"
+  ],
+  "description": "Atomic data manipulation and traversal",
+  "main": "./src/index.js",
+  "keywords": [
+    "zipper",
+    "cursor",
+    "pointer",
+    "atomic",
+    "immutable",
+    "react"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/pvande/Pointed",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ]
+}

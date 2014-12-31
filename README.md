@@ -1,10 +1,37 @@
 Pointed
 =======
 
+>   Admiring the grand structure of the Complex, I wandered ahead, mindless of
+> any particular goal.  Engineering at this scale was in a league of its own,
+> and worth taking time to appreciate.  Even more impressive, however, was the
+> intelligence that sat behind the scenes, subtly influencing the guests – and
+> me – to optimize uncountable factors.
+>
+>   It was impossible to get truly lost in the Complex, as only the thought of
+> a specific location triggered automated responses intended to guide you
+> there.  A subtle shift in lighting here, a minor increase in air pressure
+> just behind you, and a thousand other changes too small to notice would
+> ensure that you arrived there.  The experience was uncanny: on even my
+> first visit I "knew" exactly how to get anywhere, but I couldn't have
+> verbalized it if I'd tried.  Not that I had any reason to try, since every
+> other visitor had the same "sense" of direction.
+>
+>   Even after living here for three years, I was still amazed by the Complex.
+> The technical skill, the fine tuning, and the ambitious scale all culminated
+> in one of the most sophisticated places on Earth, and the seeming simplicity
+> of it all made me smile every time I thought about it.  I thought briefly
+> about taking my stroll through the arboretum, and felt the world around me
+> re-orient as the Complex carved out a path, and gently Pointed me in the
+> right direction.
+
 Pointed implements an intra-graph reference mechanism, similar to a functional
-[zipper](https://www.haskell.org/haskellwiki/Zipper).  This library aims to be
-as lightweight and comprehensible as possible, while still maintaining useful
-performance and compatibility profiles.
+[zipper].  This library aims to be as lightweight and comprehensible as
+possible, while still maintaining useful performance and compatibility profiles.
+
+Put another way, Pointed is a tool for creating navigational maps through a data
+structure.  These maps (or `Pointer`s) make it easy access, update, and monitor
+changes to the data structure, making it well suited for scoping responsibility
+and for use in declarative UI toolkits, like [React].
 
 ``` coffeescript
   Pointer = require 'pointed'
@@ -111,3 +138,6 @@ passing the given arguments to the callback functions.
   * `undo`, `redo`
 * `shouldComponentUpdate` Helpers
 * Better Object cloning
+
+[zipper]: https://www.haskell.org/haskellwiki/Zipper
+[React]: https://github.com/facebook/react

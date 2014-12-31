@@ -1,16 +1,31 @@
 {
   "name": "pointed",
-  "version": "v0.0.1",
+  "version": "0.0.1",
   "homepage": "https://github.com/pvande/pointed",
   "author": "Pieter van de Bruggen <pvande@gmail.com>",
 
-  "description": "Object traversal and updates",
-  "keywords": [ ],
+  "description": "Atomic data manipulation and traversal",
+  "main": "./src/index.js",
+  "keywords": [
+    "zipper",
+    "cursor",
+    "pointer",
+    "atomic",
+    "immutable",
+    "react"
+  ],
 
-  "main": "./index",
-  "scripts": { "test": "vows ./test/*_spec.coffee" },
-  "dependencies": { "coffee-script": "1.8.0" },
-  "devDependencies": { "vows": "0.9.0-rc1" },
+  "scripts": {
+    "prepublish": "coffee -o src -c ./index.coffee",
+    "test": "vows ./test/*_spec.coffee"
+  },
+
+  "dependencies": {  },
+  "devDependencies": {
+    "coffee-script": "1.8.0",
+    "vows": "0.9.0-rc1"
+  },
+
   "repository": {
     "type": "git", "url": "https://github.com/pvande/pointed.git"
   }
