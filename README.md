@@ -43,6 +43,20 @@ Iterates over the underlying array (or object), generating pointers for each
 element, and passes each pointer and the index (or key) to the given function.
 The values returned by the function will be collected and returned as an array.
 
+### `Pointer::isEqual(otherPointer)`
+Checks to see if this pointer and the given pointer both refer to the same path
+and referenced equivalent data when they were created.
+
+Note that two pointers that share the same underlying data and have the same
+path will *always* return identical results, permitting pointers to be both
+"long-lived" and always reflect current data.  It is for this reason that
+"Pointer equality" takes creation time into account – path equality alone does
+not answer the most common question, "Has this data changed?"
+
+### `Pointer::hash`
+A digest of the data represented by this hash.  Useful as a generic content key,
+and for quickly testing data equality.
+
 ## Events
 
 ### `Pointer::on(event, fn)`
@@ -65,6 +79,9 @@ passing the given arguments to the callback functions.
 
 ## Notable Behavior
 
+* Data that cannot be serialized to JSON is not currently supported.
+* Events are always fired on a "fresh" pointer instance.  This makes it easy to
+  compare "stale" pointers against a more current state.
 * `Pointer#update` will *not* fire a 'swap' event for pointers to keys beneath
   it.  If this is behavior you need, it's recommended that you make smaller
   changes to more deeply nested pointers.

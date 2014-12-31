@@ -69,13 +69,6 @@ suite.addBatch
 
         assert.deepEqual(args, [1, 2, 3, 4, 5])
 
-      'invokes the callback bound to the pointer': (ptr) ->
-        self = null
-        ptr.on('!', -> self = this)
-        ptr.emit('!')
-
-        assert.strictEqual(self, ptr)
-
   "On a nested Pointer instance, ":
     topic: ->
       ptr = Pointer(object: { a: { b: { c: 'string' } } }, key: 'value')
@@ -155,13 +148,6 @@ suite.addBatch
         sub.emit('!', 1, 2, 3, 4, 5)
 
         assert.deepEqual(args, [1, 2, 3, 4, 5])
-
-      'invokes the callback bound to the nested pointer': ({sub}) ->
-        self = null
-        sub.on('!', -> self = this)
-        sub.emit('!')
-
-        assert.strictEqual(self, sub)
 
       'invokes callbacks for all pointers to the given reference': ({ptr}) ->
         called = 0
