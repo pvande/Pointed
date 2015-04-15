@@ -6,11 +6,17 @@ hash = (obj, seen = []) ->
   return (Math.pow(2, 32) + code).toString(16).slice(-8)
 
 # Creates a new object reference that is a shallow copy of the given object.
-copy = (from, onto = {}) ->
-  return from unless typeof from is 'object'
-  onto[key] = value for own key, value of from
-  return onto
+copy = (obj) ->
+  return obj unless typeof obj is 'object'
+  return [obj...] if obj instanceof Array
+  return new Date(obj) if obj instanceof Date
 
+  return extend(Object.create(obj.constructor.prototype), obj)
+
+# Copies `extras` properties onto the given object.
+extend = (obj, extras) ->
+  obj[key] = value for own key, value of extras
+  return obj
 
 # Our atomic data container class.  The `root` property of every `Pointer`
 # instance inherits from this, and new `Pointer` instances are created through
@@ -27,7 +33,7 @@ class Root
 
   # Creates a new `Pointer` instance for the given path.
   get: (path) ->
-    copy { path, hash: hash(@value(path)) }, new Pointer(this)
+    extend new Pointer(this), path: path, hash: hash(@value(path))
 
   # Fetches the value at the given path.
   value: (path) ->

@@ -44,6 +44,30 @@ suite.addBatch
       ptr.get('object').update (obj) -> JSON.parse(JSON.stringify(obj))
       assert.strictEqual(ptr.value('object'), data.object)
 
+    '#update passes a copy of an object reference': (data) ->
+      ptr = Pointer(data)
+
+      original = ptr.value('object')
+      ptr.get('object').update (obj) ->
+        assert.notStrictEqual(obj, original)
+
+        obj.d = true
+        return original
+
+      assert.deepEqual(Object.keys(ptr.value('object')), ['a'])
+
+    '#update passes a copy of an array reference': (data) ->
+      ptr = Pointer(array: [ 0 ])
+
+      original = ptr.value('array')
+      ptr.get('array').update (arr) ->
+        assert.notStrictEqual(arr, original)
+
+        arr.push(1, 2, 3)
+        return original
+
+      assert.deepEqual(ptr.value('array').length, 1)
+
     '#update fires a "swap" event on all affected nodes': (data) ->
       ptr = Pointer(data)
 
