@@ -6,9 +6,15 @@ hash = (obj, seen = []) ->
   return (Math.pow(2, 32) + code).toString(16).slice(-8)
 
 # Creates a new object reference that is a shallow copy of the given object.
-copy = (from, onto = {}) ->
+copy = (from, onto = null) ->
   return from unless typeof from is 'object'
-  onto[key] = value for own key, value of from
+
+  if from instanceof Array
+    onto = [from...]
+  else
+    onto ?= Object.create(from.constructor.prototype)
+    onto[key] = value for own key, value of from
+
   return onto
 
 
