@@ -95,4 +95,15 @@ suite.addBatch
       assert.deepEqual oldResults, []
       assert.deepEqual newResults, []
 
+    '#update uses the same object type that is passed in': (data) ->
+      data['array'] = [1,2,3,4,5]
+      ptr = Pointer(data)
+
+      ptr.get('object').update (target) ->
+        assert.equal typeof target, 'object'
+        assert.equal Array.isArray(target), false
+
+      ptr.get('array').update (target) ->
+        assert.equal Array.isArray(target), true
+
 suite.export(module)
