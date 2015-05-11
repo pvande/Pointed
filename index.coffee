@@ -7,7 +7,7 @@ hash = (obj, seen = []) ->
 
 # Creates a new object reference that is a shallow copy of the given object.
 copy = (obj) ->
-  return obj unless typeof obj is 'object'
+  return obj unless obj? and typeof obj is 'object'
   return [obj...] if obj instanceof Array
   return new Date(obj) if obj instanceof Date
 

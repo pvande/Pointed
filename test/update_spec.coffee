@@ -68,6 +68,22 @@ suite.addBatch
 
       assert.deepEqual(ptr.value('array').length, 1)
 
+    '#update passes null references through': (data) ->
+      ptr = Pointer(null: null)
+
+      original = ptr.value('null')
+      ptr.get('null').update (x) -> 'not null'
+
+      assert.equal(ptr.value('null'), 'not null')
+
+    '#update passes undefined references through': (data) ->
+      ptr = Pointer(undefined: undefined)
+
+      original = ptr.value('undefined')
+      ptr.get('undefined').update (x) -> 'not undefined'
+
+      assert.equal(ptr.value('undefined'), 'not undefined')
+
     '#update fires a "swap" event on all affected nodes': (data) ->
       ptr = Pointer(data)
 
