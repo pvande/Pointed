@@ -19,7 +19,7 @@
   };
 
   copy = function(obj) {
-    if (typeof obj !== 'object') {
+    if (!((obj != null) && typeof obj === 'object')) {
       return obj;
     }
     if (obj instanceof Array) {
