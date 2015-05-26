@@ -62,7 +62,7 @@ the pointer.
 
 ### `Pointer::update((oldData) -> newData)`
 Updates the data underlying the pointer based on the value returned by the given
-function.  This will emit [a "swap" event](#Events) on this pointer and all
+function.  This will emit [a "swap" event](#events) on this pointer and all
 pointers that contain this one.
 
 ### `Pointer::map((ptr, key) -> obj)`
