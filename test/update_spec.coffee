@@ -17,6 +17,15 @@ suite.addBatch
 
       assert.strictEqual(ptr.value(), newData)
 
+    '#update replaces the hash when updating data': (data) ->
+      newData = { new: 'data' }
+
+      ptr = Pointer(data)
+      oldHash = ptr.hash
+      ptr.update(-> newData)
+
+      assert.notEqual(oldHash, ptr.hash)
+
     '#update changes object references back to the root': (data) ->
       ptr = Pointer(data)
       ptr.get('object', 'a', 'b', 'c').update(-> 'new string')

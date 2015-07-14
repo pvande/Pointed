@@ -25,8 +25,7 @@ suite.addBatch
 
     'two pointers built against different data are not equal': (ptr) ->
       ptr1 = ptr.get('nested', 'key1')
-      ptr1.update (x) -> { something: 'different' }
-      ptr2 = ptr.get('nested', 'key1')
+      ptr2 = Pointer(ptr.value()).get('nested', 'key1')
 
       assert.isFalse(ptr1.isEqual(ptr2))
 

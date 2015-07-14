@@ -40,7 +40,7 @@ class Root
     path.reduce(((value, key) -> value[key] if value?), @data)
 
   # Atomically update the underlying data store.
-  swap: (@data) ->
+  swap: (@data) -> @hash = hash(@data)
 
   # Adds an event listener for the given key.
   on: (key, fn) ->
@@ -94,6 +94,7 @@ class Pointer
     else
       @root.swap(data)
 
+    @hash = newHash
     @emit('swap', data, value)
 
   # Maps the given function over pointers to each element of the underlying
@@ -112,7 +113,7 @@ class Pointer
 
   # Computes pointer equality, based on hash identity.
   isEqual: (other) ->
-    hash(@path) is hash(other.path) && @hash == other.hash
+    @root is other.root && hash(@path) is hash(other.path)
 
 if module?
   module.exports = Pointer

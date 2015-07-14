@@ -74,6 +74,7 @@
 
     Root.prototype.swap = function(data) {
       this.data = data;
+      return this.hash = hash(this.data);
     };
 
     Root.prototype.on = function(key, fn) {
@@ -154,6 +155,7 @@
       } else {
         this.root.swap(data);
       }
+      this.hash = newHash;
       return this.emit('swap', data, value);
     };
 
@@ -201,7 +203,7 @@
     };
 
     Pointer.prototype.isEqual = function(other) {
-      return hash(this.path) === hash(other.path) && this.hash === other.hash;
+      return this.root === other.root && hash(this.path) === hash(other.path);
     };
 
     return Pointer;
